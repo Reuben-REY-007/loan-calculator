@@ -139,8 +139,8 @@
 
     <div class="grid">
       <div>
-        <label>Start Date:</label>
-        <input type="date" id="startDate">
+        <label>Collection Date:</label>
+        <input type="date" id="collectionDate" >
       </div>
       <div>
         <label>Loan Amount (₵):</label>
@@ -191,7 +191,15 @@
     }
 
     function calculateLoan() {
-      const startDate = new Date(document.getElementById("startDate").value);
+      const collectionDate = new Date(document.getElementById("collectionDate").value);
+      if (!collectionDate.getTime()) {
+        document.getElementById("result").innerHTML = "<b>Please select a valid collection date.</b>";
+        return;
+      }
+
+      const startDate = new Date(collectionDate);
+      startDate.setDate(startDate.getDate() + 7);
+      
       const amount = parseFloat(document.getElementById("amount").value);
       const interest = parseFloat(document.getElementById("interest").value);
       const months = parseInt(document.getElementById("months").value);
@@ -202,12 +210,12 @@
       }
 
       const totalWeeks = months * 4;
-      const totalRepayment = amount + (amount * (interest / 100) * months);
-      const weeklyPayment = totalRepayment / totalWeeks;
-      const dailyPayment = weeklyPayment / 5;
-      const dueDate = addWeeks(startDate, totalWeeks);
       const interestPayment = (interest / 100) * amount
       const interestByDuration = interestPayment * months
+      const totalRepayment = amount + interestByDuration;
+      const weeklyPayment = totalRepayment / totalWeeks;
+      const dailyPayment = weeklyPayment / 5;
+      const dueDate = addWeeks(collectionDate, totalWeeks);
 
       document.getElementById("result").innerHTML = `
         <b>Loan Summary</b><br>
@@ -218,8 +226,8 @@
         <b>Total Repayment:</b> ₵${totalRepayment.toFixed(2)} <br>
         <b>Weekly Payment:</b> ₵${weeklyPayment.toFixed(2)} <br>
         <b>Daily Payment (Mon–Fri):</b> ₵${dailyPayment.toFixed(2)} <br><br>
-        Start Date: ${formatISO(startDate)} <br>
-        <b>Due Date:</b> ${formatISO(dueDate)}
+        <b>Start Date:</b> ${formatISO(startDate)} <br>
+        <span style="color:red; font-weight:bold">Due Date:</span> ${formatISO(dueDate)}
       `;
     }
 
