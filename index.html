@@ -170,6 +170,9 @@
   <script>
     let tggl = false;
 
+    // set date input to today's date
+    document.getElementById("collectionDate").valueAsDate = new Date();
+
     const inputs = document.querySelectorAll("#startDate, #amount, #months");
     const clearBtn = document.getElementById("clearBtn");
 
